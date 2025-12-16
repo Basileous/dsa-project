@@ -60,3 +60,44 @@ class CircularDoublyLinkedList:
         self.current = self.current.next
     def move_prev(self):
         self.current = self.current.prev
+def merge_sort_hand(hand, sort_key='color'):
+    if len(hand) <= 1:
+        return hand
+
+    mid = len(hand) // 2
+    left_half = merge_sort_hand(hand[:mid], sort_key)
+    right_half = merge_sort_hand(hand[mid:], sort_key)
+
+    return merge(left_half, right_half, sort_key)
+
+def merge(left, right, sort_key):
+    sorted_list = []
+    i = j = 0
+
+    def get_val_weight(card):
+        if card.value.isdigit(): return int(card.value)
+        mapping = {'Skip': 10, 'Reverse': 11, 'Draw2': 12, 'Wild': 13, 'Wild4': 14}
+        return mapping.get(card.value, 0)
+
+    while i < len(left) and j < len(right):
+        condition = False
+        if sort_key == 'color':
+            if left[i].color < right[j].color:
+                condition = True
+            elif left[i].color == right[j].color:
+                if get_val_weight(left[i]) < get_val_weight(right[j]):
+                    condition = True
+        else:
+             if get_val_weight(left[i]) < get_val_weight(right[j]):
+                 condition = True
+        
+        if condition:
+            sorted_list.append(left[i])
+            i += 1
+        else:
+            sorted_list.append(right[j])
+            j += 1
+
+    sorted_list.extend(left[i:])
+    sorted_list.extend(right[j:])
+    return sorted_list
